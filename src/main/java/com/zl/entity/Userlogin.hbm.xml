@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.zl.entity.Userlogin" table="userlogin" schema="" catalog="mytest" >
+        <id name="id">
+
+            <column name="id" sql-type="varchar" length="50" not-null="true" />
+            <generator class="uuid"/>
+        </id>
+        <property name="username">
+            <column name="username" sql-type="varchar" length="10" not-null="true" />
+        </property>
+        <property name="password">
+            <column name="password" sql-type="varchar" length="50" not-null="true" />
+        </property>
+        <one-to-one name="userdetail" class="com.zl.entity.Userdetail" cascade="all" property-ref="userlogin" />
+    </class>
+</hibernate-mapping>

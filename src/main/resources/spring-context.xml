@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:jaxws="http://cxf.apache.org/jaxws"
+
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://cxf.apache.org/jaxws
+    http://cxf.apache.org/schemas/jaxws.xsd">
+
+    <!--加载资源文件-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!--开启注解扫描-->
+    <context:annotation-config/>
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.zl.*"/>
+    <!--SpringMVC视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/jsp"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--配置数据源C3p0-->
+    <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">-->
+        <!--<property name="jdbcUrl" value="${jdbc.url}"/>-->
+        <!--<property name="driverClass" value="${jdbc.driver}"/>-->
+        <!--<property name="user" value="${jdbc.user}"/>-->
+        <!--<property name="password" value="${jdbc.pwd}"/>-->
+
+    <!--</bean>-->
+    <!--配置数据源 阿里巴巴的Druid-->
+    <bean id="dataSource-druid" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.pwd}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="initialSize" value="1" />
+        <property name="maxActive" value="20" />
+    </bean>
+
+    <!--配置sessionFactory-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource-druid"/>
+        <!--配置注册类-->
+        <!--<property name="annotatedClasses">-->
+            <!--<list>-->
+                <!--<value></value>-->
+            <!--</list>-->
+        <!--</property>-->
+        <!--配置hibernate的属性-->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">
+                    org.hibernate.dialect.MySQL5Dialect
+                </prop>
+                <prop key="hibernate.show_sql">
+                    true
+                </prop>
+                <prop key="format_sql">
+                    false
+                </prop>
+
+            </props>
+        </property>
+        <property name="mappingLocations">
+            <list>
+                <value>classpath:com/zl/entity/Userdetail.hbm.xml</value>
+                <value>classpath:com/zl/entity/Userlogin.hbm.xml</value>
+            </list>
+        </property>
+
+
+  </bean>
+
+    <!--配置事物管理器-->
+  <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+      <property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+    <!--配置aop切入点-->
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">
+      <tx:attributes>
+          <tx:method name="save*" propagation="REQUIRED" />
+          <tx:method name="get*"  read-only="true"/>
+          <tx:method name="check*" read-only="true"/>
+      </tx:attributes>
+  </tx:advice>
+    <!--配置切面-->
+  <aop:config >
+     <aop:pointcut id="userService" expression="execution(* com.zl.service.impl.*.*(..))"/>
+     <aop:advisor advice-ref="txAdvice" pointcut-ref="userService"/>
+  </aop:config>
+
+    <!--WebService-->
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <jaxws:endpoint id="loginWebService" implementor="com.zl.webService.LoginService.impl.LoginServiceImpl" address="/loginService2" />
+</beans>

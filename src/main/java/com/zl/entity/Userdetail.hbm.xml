@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.zl.entity.Userdetail" table="userdetail" schema="" catalog="mytest" >
+        <id name="id">
+            <column name="id" sql-type="int" length="10" not-null="true" />
+            <generator class="increment"/>
+        </id>
+        <property name="address">
+            <column name="address" sql-type="varchar" length="100" />
+        </property>
+        <property name="phone">
+            <column name="phone" sql-type="varchar" length="10" />
+        </property>
+        <property name="realname">
+            <column name="realname" sql-type="varchar" length="10" />
+        </property>
+        <property name="age">
+            <column name="age" sql-type="int" length="10" />
+        </property>
+        <property name="sex">
+            <column name="sex" sql-type="char" length="2" />
+        </property>
+
+        <many-to-one name="userlogin" class="com.zl.entity.Userlogin" unique="true" column="loginuserid"/>
+
+    </class>
+</hibernate-mapping>
