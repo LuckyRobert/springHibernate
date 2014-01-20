@@ -5,11 +5,13 @@ import com.zl.entity.Userlogin;
 import com.zl.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,19 +55,25 @@ public class UserAction {
     }
     //登录验证
     @RequestMapping(value = "login",method = RequestMethod.POST)
-    public String loginUser( Userlogin userlogin1,Model model){
-
+    public String loginUser(@ModelAttribute("userlogin1") @Valid Userlogin userlogin1,BindingResult error,Model model){
+        System.out.println(error.hasErrors());
+        System.out.println(error);
         boolean bool=userService.checkUser(userlogin1);
         if(!bool){
             model.addAttribute("result","登录失败");
 
-            return "redirect:http://localhost:8080/index.jsp";
+            return "welcome";
         }else {
             model.addAttribute("result","登录成功");
         }
 
         return "/success";
 
+    }
+
+    public String test(){
+
+        return null;
     }
 
     public Userlogin getUserlogin() {

@@ -20,14 +20,14 @@
     <link rel="stylesheet" type="text/css" href="styles.css">-->
       <script type="text/javascript" >
           var num=2.446257;
-          alert(num.toFixed(5));
+          //alert(num.toFixed(5));
           var person = {name :'Saad', age : 26, department : {ID : 15, name : "RD"} };
           var stringFromPerson = JSON.stringify(person);
-          alert(stringFromPerson);
+         // alert(stringFromPerson);
           /* stringFromPerson is equal to "{"name":"Saad","age":26,"department":{"ID":15,"name":"RD"}}"*/
           var personFromString = JSON.parse(stringFromPerson);
           /* personFromString is equal to person object  */
-          alert(personFromString);
+         // alert(personFromString);
 //          setInterval(function(){
 //              alert("aa");
 //          },1000);
@@ -42,12 +42,15 @@
       <input type="submit" value="提交"/>&nbsp;<a href="/user/insert.action">马上注册</a>
   </form>
   ${result}
+    <form:form commandName="userlogin1">
+        <form:errors path="*" cssStyle="color:red"></form:errors><br/>
+    </form:form>
 
 
   </body>
-  
+
 </html>
-        
+
             
                 
                     

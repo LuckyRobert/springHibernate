@@ -1,5 +1,7 @@
 package com.zl.entity;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -10,7 +12,9 @@ package com.zl.entity;
  */
 public class Userlogin {
     private String id;
+    @NotBlank(message = "{username.not.empty}")
     private String username;
+    @NotBlank
     private String password;
     private Userdetail userdetail;
 

@@ -21,16 +21,36 @@
     http://cxf.apache.org/schemas/jaxws.xsd">
 
     <!--加载资源文件-->
-    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <context:property-placeholder location="classpath:*.properties"/>
     <!--开启注解扫描-->
     <context:annotation-config/>
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven validator="validator"/>
     <context:component-scan base-package="com.zl.*"/>
+    <aop:aspectj-autoproxy proxy-target-class="true" />
     <!--SpringMVC视图解析器-->
+    <bean class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+        <property name="basename" value="spring-views" />
+        <property name="order" value="0" />
+    </bean>
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/jsp"/>
         <property name="suffix" value=".jsp"/>
+        <property name="order" value="1"/>
     </bean>
+    <!--添加对JSR-303的支持-->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:messageSource" />
+
+
+        <property name="fileEncodings" value="utf-8"/>
+        <property name="cacheSeconds" value="120"/>
+    </bean>
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+        <property name="validationMessageSource" ref="messageSource"/>
+
+    </bean>
+
 
     <!--配置数据源C3p0-->
     <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">-->
